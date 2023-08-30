@@ -3,11 +3,12 @@ use rome_formatter::{write, CstFormatContext, FormatRuleWithOptions, GroupId};
 
 use crate::utils::array::write_array_node;
 
+use crate::context::trailing_comma::FormatTrailingComma;
 use rome_js_syntax::JsArrayElementList;
 use rome_rowan::{AstNode, AstSeparatedList};
 
 #[derive(Debug, Clone, Default)]
-pub struct FormatJsArrayElementList {
+pub(crate) struct FormatJsArrayElementList {
     group_id: Option<GroupId>,
 }
 
@@ -32,13 +33,16 @@ impl FormatRule<JsArrayElementList> for FormatJsArrayElementList {
 
         match layout {
             ArrayLayout::Fill => {
+                let trailing_separator = FormatTrailingComma::ES5.trailing_separator(f.options());
+
                 let mut filler = f.fill();
 
                 // Using format_separated is valid in this case as can_print_fill does not allow holes
-                for (element, formatted) in node
-                    .iter()
-                    .zip(node.format_separated(",").with_group_id(self.group_id))
-                {
+                for (element, formatted) in node.iter().zip(
+                    node.format_separated(",")
+                        .with_trailing_separator(trailing_separator)
+                        .with_group_id(self.group_id),
+                ) {
                     filler.entry(
                         &format_once(|f| {
                             if get_lines_before(element?.syntax()) > 1 {
@@ -93,8 +97,8 @@ pub(crate) fn can_concisely_print_array_list(
     list: &JsArrayElementList,
     comments: &JsComments,
 ) -> bool {
-    use rome_js_syntax::JsAnyArrayElement::*;
-    use rome_js_syntax::JsAnyExpression::*;
+    use rome_js_syntax::AnyJsArrayElement::*;
+    use rome_js_syntax::AnyJsExpression::*;
     use rome_js_syntax::JsUnaryOperator::*;
 
     if list.is_empty() {
@@ -103,17 +107,17 @@ pub(crate) fn can_concisely_print_array_list(
 
     list.elements().all(|item| {
         let syntax = match item.into_node() {
-            Ok(JsAnyExpression(JsAnyLiteralExpression(
-                rome_js_syntax::JsAnyLiteralExpression::JsNumberLiteralExpression(literal),
+            Ok(AnyJsExpression(AnyJsLiteralExpression(
+                rome_js_syntax::AnyJsLiteralExpression::JsNumberLiteralExpression(literal),
             ))) => literal.into_syntax(),
 
-            Ok(JsAnyExpression(JsUnaryExpression(expr))) => {
+            Ok(AnyJsExpression(JsUnaryExpression(expr))) => {
                 let signed = matches!(expr.operator(), Ok(Plus | Minus));
                 let argument = expr.argument();
 
                 match argument {
-                    Ok(JsAnyLiteralExpression(
-                        rome_js_syntax::JsAnyLiteralExpression::JsNumberLiteralExpression(literal),
+                    Ok(AnyJsLiteralExpression(
+                        rome_js_syntax::AnyJsLiteralExpression::JsNumberLiteralExpression(literal),
                     )) => {
                         if signed && !comments.has_comments(literal.syntax()) {
                             expr.into_syntax()

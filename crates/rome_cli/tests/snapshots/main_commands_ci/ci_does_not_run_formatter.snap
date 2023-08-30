@@ -10,7 +10,6 @@ expression: content
     "enabled": false
   }
 }
-
 ```
 
 ## `file.js`
@@ -20,5 +19,9 @@ expression: content
 ```
 
 # Emitted Messages
+
+```block
+Checked 1 file(s) in <TIME>
+```
 
 

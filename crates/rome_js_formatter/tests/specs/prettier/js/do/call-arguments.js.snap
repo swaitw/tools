@@ -1,7 +1,7 @@
 ---
-source: crates/rome_js_formatter/tests/prettier_tests.rs
-info:
-  test_file: "js\\do\\call-arguments.js"
+source: crates/rome_formatter_test/src/snapshot_builder.rs
+assertion_line: 212
+info: js/do/call-arguments.js
 ---
 
 # Input
@@ -48,6 +48,7 @@ expect(
     bar;
   }
 ).toThrow(ReferenceError);
+
 ```
 
 
@@ -167,14 +168,20 @@ bar;
 ).toThrow(ReferenceError)
 ```
 
-
 # Errors
 ```
 call-arguments.js:3:3 parse ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
   × expected an expression but instead found 'do'
   
-  × Expected an expression here
+    1 │ // from https://github.com/babel/babel/pull/13122/
+    2 │ expect(
+  > 3 │   do {
+      │   ^^
+    4 │     var bar = "foo";
+    5 │     if (!bar) throw new Error(
+  
+  i Expected an expression here
   
     1 │ // from https://github.com/babel/babel/pull/13122/
     2 │ expect(
@@ -187,8 +194,6 @@ call-arguments.js:10:1 parse ━━━━━━━━━━━━━━━━━
 
   × expected `while` but instead found `)`
   
-  × unexpected
-  
      8 │     bar;
      9 │   }
   > 10 │ ).toBe("foo");
@@ -196,11 +201,20 @@ call-arguments.js:10:1 parse ━━━━━━━━━━━━━━━━━
     11 │ expect(bar).toBe("foo");
     12 │ 
   
+  i Remove )
+  
 call-arguments.js:10:2 parse ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
   × expected a statement but instead found '.toBe("foo")'
   
-  × Expected a statement here
+     8 │     bar;
+     9 │   }
+  > 10 │ ).toBe("foo");
+       │  ^^^^^^^^^^^^
+    11 │ expect(bar).toBe("foo");
+    12 │ 
+  
+  i Expected a statement here
   
      8 │     bar;
      9 │   }
@@ -213,7 +227,14 @@ call-arguments.js:13:9 parse ━━━━━━━━━━━━━━━━━
 
   × expected an expression, or an assignment but instead found 'do'
   
-  × Expected an expression, or an assignment here
+    11 │ expect(bar).toBe("foo");
+    12 │ 
+  > 13 │ var x = do {
+       │         ^^
+    14 │   var bar = "foo";
+    15 │   if (!bar) throw new Error(
+  
+  i Expected an expression, or an assignment here
   
     11 │ expect(bar).toBe("foo");
     12 │ 
@@ -226,8 +247,6 @@ call-arguments.js:19:2 parse ━━━━━━━━━━━━━━━━━
 
   × expected `while` but instead found `;`
   
-  × unexpected
-  
     17 │   )
     18 │   bar;
   > 19 │ };
@@ -235,11 +254,19 @@ call-arguments.js:19:2 parse ━━━━━━━━━━━━━━━━━
     20 │ 
     21 │ expect(
   
+  i Remove ;
+  
 call-arguments.js:22:3 parse ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
   × expected an expression but instead found 'do'
   
-  × Expected an expression here
+    21 │ expect(
+  > 22 │   do {
+       │   ^^
+    23 │     var bar = "foo";
+    24 │     bar;
+  
+  i Expected an expression here
   
     21 │ expect(
   > 22 │   do {
@@ -251,8 +278,6 @@ call-arguments.js:26:1 parse ━━━━━━━━━━━━━━━━━
 
   × expected `while` but instead found `)`
   
-  × unexpected
-  
     24 │     bar;
     25 │   }
   > 26 │ ).toBe("foo");
@@ -260,11 +285,20 @@ call-arguments.js:26:1 parse ━━━━━━━━━━━━━━━━━
     27 │ expect(bar).toBe("foo");
     28 │ 
   
+  i Remove )
+  
 call-arguments.js:26:2 parse ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
   × expected a statement but instead found '.toBe("foo")'
   
-  × Expected a statement here
+    24 │     bar;
+    25 │   }
+  > 26 │ ).toBe("foo");
+       │  ^^^^^^^^^^^^
+    27 │ expect(bar).toBe("foo");
+    28 │ 
+  
+  i Expected a statement here
   
     24 │     bar;
     25 │   }
@@ -277,7 +311,14 @@ call-arguments.js:29:9 parse ━━━━━━━━━━━━━━━━━
 
   × expected an expression, or an assignment but instead found 'do'
   
-  × Expected an expression, or an assignment here
+    27 │ expect(bar).toBe("foo");
+    28 │ 
+  > 29 │ var x = do {
+       │         ^^
+    30 │   var bar = "foo";
+    31 │   bar;
+  
+  i Expected an expression, or an assignment here
   
     27 │ expect(bar).toBe("foo");
     28 │ 
@@ -290,8 +331,6 @@ call-arguments.js:32:2 parse ━━━━━━━━━━━━━━━━━
 
   × expected `while` but instead found `;`
   
-  × unexpected
-  
     30 │   var bar = "foo";
     31 │   bar;
   > 32 │ };
@@ -299,11 +338,19 @@ call-arguments.js:32:2 parse ━━━━━━━━━━━━━━━━━
     33 │ 
     34 │ expect(
   
+  i Remove ;
+  
 call-arguments.js:35:9 parse ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
   × expected a function body, or an expression but instead found 'do'
   
-  × Expected a function body, or an expression here
+    34 │ expect(
+  > 35 │   () => do {
+       │         ^^
+    36 │     () => {
+    37 │       var bar = "foo";
+  
+  i Expected a function body, or an expression here
   
     34 │ expect(
   > 35 │   () => do {
@@ -315,8 +362,6 @@ call-arguments.js:36:5 parse ━━━━━━━━━━━━━━━━━
 
   × expected `,` but instead found `(`
   
-  × unexpected
-  
     34 │ expect(
     35 │   () => do {
   > 36 │     () => {
@@ -324,11 +369,11 @@ call-arguments.js:36:5 parse ━━━━━━━━━━━━━━━━━
     37 │       var bar = "foo";
     38 │     };
   
+  i Remove (
+  
 call-arguments.js:38:6 parse ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
   × expected `,` but instead found `;`
-  
-  × unexpected
   
     36 │     () => {
     37 │       var bar = "foo";
@@ -337,12 +382,22 @@ call-arguments.js:38:6 parse ━━━━━━━━━━━━━━━━━
     39 │     bar;
     40 │   }
   
+  i Remove ;
+  
 call-arguments.js:40:3 parse ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
   × expected a statement but instead found '}
     ).toThrow(ReferenceError)'
   
-  × Expected a statement here
+    38 │     };
+    39 │     bar;
+  > 40 │   }
+       │   ^
+  > 41 │ ).toThrow(ReferenceError);
+       │ ^^^^^^^^^^^^^^^^^^^^^^^^^
+    42 │ 
+  
+  i Expected a statement here
   
     38 │     };
     39 │     bar;

@@ -1,7 +1,6 @@
 ---
-source: crates/rome_js_formatter/tests/prettier_tests.rs
-info:
-  test_file: "js\\objects\\expression.js"
+source: crates/rome_formatter_test/src/snapshot_builder.rs
+info: js/objects/expression.js
 ---
 
 # Input
@@ -31,6 +30,7 @@ const a3 = {
   someKey:
     (longLongLongLongLongLongLongLongLongLongLongLongLongLongName, longLongLongLongLongLongLongLongLongLongLongLongLongLongName, longLongLongLongLongLongLongLongLongLongLongLongLongLongName)
 };
+
 ```
 
 
@@ -39,26 +39,19 @@ const a3 = {
 ```diff
 --- Prettier
 +++ Rome
-@@ -1,10 +1,12 @@
--() => ({}``);
--({}``);
--a = () => ({}.x);
--({} && a, b);
--({}::b, 0);
--({}::b()``[""].c++ && 0 ? 0 : 0, 0);
--({}(), 0);
-+() => ({})``;
-+({})``;
-+a = () => ({}).x;
-+({}) && a, b;
+@@ -2,8 +2,10 @@
+ ({})``;
+ a = () => ({}).x;
+ ({}) && a, b;
+-({})::b, 0;
+-({})::b()``[""].c++ && 0 ? 0 : 0, 0;
 +({}
 +::b, 0)
 +({}
 +::b()``[''].c++ && 0 ? 0 : 0, 0)
-+({})(), 0;
+ ({})(), 0;
  ({} = 0);
  ({} = 0), 1;
- 
 ```
 
 # Output
@@ -93,14 +86,11 @@ const a3 = {
 };
 ```
 
-
 # Errors
 ```
 expression.js:5:4 parse ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
   × expected `)` but instead found `:`
-  
-  × unexpected
   
     3 │ a = () => ({}).x;
     4 │ ({} && a, b);
@@ -109,11 +99,11 @@ expression.js:5:4 parse ━━━━━━━━━━━━━━━━━━�
     6 │ ({}::b()``[''].c++ && 0 ? 0 : 0, 0);
     7 │ ({}(), 0);
   
+  i Remove :
+  
 expression.js:6:4 parse ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
   × expected `)` but instead found `:`
-  
-  × unexpected
   
     4 │ ({} && a, b);
     5 │ ({}::b, 0);
@@ -121,6 +111,8 @@ expression.js:6:4 parse ━━━━━━━━━━━━━━━━━━�
       │    ^
     7 │ ({}(), 0);
     8 │ ({} = 0);
+  
+  i Remove :
   
 
 ```

@@ -1,13 +1,14 @@
 ---
-source: crates/rome_js_formatter/tests/prettier_tests.rs
-info:
-  test_file: "js\\sloppy-mode\\function-declaration-in-if.js"
+source: crates/rome_formatter_test/src/snapshot_builder.rs
+assertion_line: 212
+info: js/sloppy-mode/function-declaration-in-if.js
 ---
 
 # Input
 
 ```js
 if (false) function foo(){}
+
 ```
 
 
@@ -27,18 +28,17 @@ if (false) function foo(){}
 if (false) function foo(){}
 ```
 
-
 # Errors
 ```
 function-declaration-in-if.js:1:12 parse ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
   × In strict mode code, functions can only be declared at top level or inside a block
   
-  × wrap the function in a block statement
-  
   > 1 │ if (false) function foo(){}
       │            ^^^^^^^^^^^^^^^^
     2 │ 
+  
+  i wrap the function in a block statement
   
 
 ```

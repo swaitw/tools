@@ -35,16 +35,16 @@ jobs:
           file-name: npm/rome/package.json
 
       - name: Set version name
-        run: echo "version=${{ steps.version.outputs.version }}" >> $GITHUB_ENV
-
-      - name: Check prerelease status
-        id: prerelease
-        if: env.nightly == 'true'
-        run: echo "prerelease=true" >> $GITHUB_ENV
-
-      - name: Check version status
         if: steps.version.outputs.changed == 'true'
-        run: 'echo "Version change found! New version: ${{ steps.version.outputs.version }} (${{ steps.version.outputs.version_type }})"'
+        run: |
+          echo "Version change found! New version: ${{ steps.version.outputs.version }} (${{ steps.version.outputs.version_type }})"
+          echo "version=${{ steps.version.outputs.version }}" >> $GITHUB_ENV
+
+      - name: Set prerelease status
+        if: env.nightly == 'true'
+        run: |
+          echo "prerelease=true" >> $GITHUB_ENV
+          echo "version=$(node npm/rome/scripts/update-nightly-version.mjs)" >> $GITHUB_ENV
 
   build:
     strategy:
@@ -74,9 +74,11 @@ jobs:
 
     needs: check
     if: needs.check.outputs.version_changed == 'true' || needs.check.outputs.nightly == 'true'
+    env:
+        version: ${{ needs.check.outputs.version }}
     outputs:
       version: ${{ env.version }}
-      prerelease: ${{ env.prerelease }}
+      prerelease: ${{ needs.check.outputs.prerelease }}
 
     steps:
       - name: Checkout repository
@@ -87,18 +89,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 14.x
-
-      - name: Set release infos
-        if: needs.check.outputs.prerelease == 'true'
-        run: |
-          echo "prerelease=true" >> $GITHUB_ENV
-          node npm/rome/scripts/update-nightly-version.mjs >> $GITHUB_ENV
-      - name: Set release infos
-        if: needs.check.outputs.prerelease != 'true'
-        run: |
-          echo "prerelease=false" >> $GITHUB_ENV
-          echo "version=${{ needs.check.outputs.version }}" >> $GITHUB_ENV
+          node-version: 18
 
       - name: Install Rust toolchain
         run: rustup target add ${{ matrix.target }}
@@ -154,7 +145,7 @@ jobs:
           fetch-depth: 1
 
       - name: Install wasm-pack
-        uses: jetli/wasm-pack-action@v0.3.0
+        uses: jetli/wasm-pack-action@v0.4.0
 
       - name: Build WASM module for bundlers
         run: wasm-pack build --out-dir ../../npm/wasm-bundler --target bundler --release --scope rometools crates/rome_wasm
@@ -179,7 +170,7 @@ jobs:
     needs:
       - build
       - build-wasm
-    environment: marketplace
+    environment: npm-publish
     steps:
       - uses: actions/checkout@v3
 
@@ -196,7 +187,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 14.x
+          node-version: 18
           registry-url: 'https://registry.npmjs.org'
 
       - name: Set release infos
@@ -205,16 +196,16 @@ jobs:
       - name: Generate npm packages
         run: node npm/rome/scripts/generate-packages.mjs
 
-      - name: Publish npm packages (pre-release)
-        run: for package in npm/*; do npm publish $package --tag nightly --access public; done
-        if: needs.build.outputs.prerelease == 'true'
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
-      - name: Publish npm packages
-        run: for package in npm/*; do npm publish $package --tag next --access public; done
+      - name: Publish npm packages as latest
+        run: for package in npm/*; do if [ $package != "npm/js-api" ]; then npm publish $package --tag latest --access public; fi; done
         if: needs.build.outputs.prerelease != 'true'
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Publish npm packages as nightly
+        run: for package in npm/*; do if [ $package != "npm/js-api" ]; then npm publish $package --tag nightly --access public; fi; done
+        if: needs.build.outputs.prerelease == 'true'
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Create GitHub release and tag
         uses: softprops/action-gh-release@v1

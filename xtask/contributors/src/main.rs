@@ -9,7 +9,7 @@ use xtask::*;
 ///
 /// Only users that have read rights can run this script
 fn main() -> Result<()> {
-    let root = project_root().join("website/src/_includes");
+    let root = project_root().join("website/src/components");
     let mut args = Arguments::from_env();
     let token: String = args.value_from_str("--token").unwrap();
     let contributors = get_contributors(&token);
@@ -17,11 +17,16 @@ fn main() -> Result<()> {
     let mut content = String::new();
 
     let command = "Use the command `cargo contributors`".to_string();
-    write!(content, "<!-- {} -->", prepend_generated_preamble(command))?;
+    write!(
+        content,
+        "{{/** {} */}}",
+        prepend_generated_preamble(command)
+    )?;
     content.push('\n');
-    content.push_str("### Code contributors");
+    content.push_str("<h3>Code contributors</h3>");
     content.push('\n');
-    content.push_str("<ul class=\"team-list credits\">");
+    content.push_str("<ul class=\"credits-people-list contributors\">");
+    content.push('\n');
     for contributor in contributors {
         let mut contributor_html = String::new();
         let escaped_login = html_escape::encode_text(&contributor.login);
@@ -42,10 +47,11 @@ fn main() -> Result<()> {
         write!(content, "\" alt=\"{}\" />", contributor.login)?;
         write!(content, "<span>{}</span>", escaped_login)?;
         content.push_str("</a></li>");
+        content.push('\n');
     }
 
     content.push_str("</ul>");
-    fs2::write(root.join("contributors.md"), content)?;
+    fs2::write(root.join("Contributors.astro"), content)?;
 
     Ok(())
 }
@@ -82,7 +88,7 @@ fn contributors_request(url: &str, token: &str, contributors: &mut Vec<Contribut
                     // SAFETY: checked before
                     let end_index = link.find("; rel=\"next\"").unwrap();
                     let url = &link[start_index..end_index];
-                    let url = url.replace('<', "").replace('>', "");
+                    let url = url.replace(['<', '>'], "");
 
                     contributors_request(&url, token, contributors);
                 }

@@ -1,8 +1,11 @@
 ---
-source: crates/rome_js_formatter/tests/spec_test.rs
-expression: assignment.js
+source: crates/rome_formatter_test/src/snapshot_builder.rs
+info: js/module/assignment/assignment.js
 ---
+
 # Input
+
+```js
 a  =    b
 a  +=   b
 a  -=   b
@@ -158,15 +161,27 @@ a =
     } = {}
 
 
+```
+
+
 =============================
+
 # Outputs
+
 ## Output 1
+
 -----
 Indent style: Tab
 Line width: 80
 Quote style: Double Quotes
+JSX quote style: Double Quotes
 Quote properties: As needed
+Trailing comma: All
+Semicolons: Always
+Arrow parentheses: Always
 -----
+
+```js
 a = b;
 a += b;
 a -= b;
@@ -391,10 +406,10 @@ a = {
 	loreum,
 	ipsurm,
 } = {};
+```
 
-
-## Lines exceeding width of 80 characters
-
+# Lines exceeding max width of 80 characters
+```
    39: this_is_a_very_long_key_and_the_assignment_should_be_put_on_the_next_line_this_is_a_very_long_key_and_the_assignment_should_be_put_on_the_next_line_1 = require();
    40: class_member_with_looooooooooooooooongggggggg_nameeeeeeeeee = class MyLooooonnnngggClassNamee {
    45: this_is_a_very_long_key_and_the_assignment_should_be_put_on_the_next_line_this_is_a_very_long_key_and_the_assignment_should_be_put_on_the_next_line_boolean_true = true;
@@ -407,4 +422,6 @@ a = {
    62: 	"12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890";
    64: 	"12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890";
    66: 	"12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890";
+```
+
 

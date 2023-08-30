@@ -1,26 +1,46 @@
 //! Generated file, do not edit by hand, see `xtask/codegen`
 
 use rome_analyze::declare_group;
-mod no_async_promise_executor;
-mod no_comment_text;
-mod no_compare_neg_zero;
-mod no_debugger;
-mod no_delete;
-mod no_double_equals;
-mod no_empty_pattern;
-mod no_extra_boolean_cast;
-mod no_implicit_boolean;
-mod no_multiple_spaces_in_regular_expression_literals;
-mod no_shadow_restricted_names;
-mod no_sparse_array;
-mod no_unnecessary_continue;
-mod no_unsafe_negation;
-mod no_unused_template_literal;
-mod use_block_statements;
-mod use_simplified_logic_expression;
-mod use_single_case_statement;
-mod use_single_var_declarator;
-mod use_template;
-mod use_valid_typeof;
-mod use_while;
-declare_group! { pub (crate) Correctness { name : "correctness" , rules : [self :: no_async_promise_executor :: NoAsyncPromiseExecutor , self :: no_comment_text :: NoCommentText , self :: no_compare_neg_zero :: NoCompareNegZero , self :: no_debugger :: NoDebugger , self :: no_delete :: NoDelete , self :: no_double_equals :: NoDoubleEquals , self :: no_empty_pattern :: NoEmptyPattern , self :: no_extra_boolean_cast :: NoExtraBooleanCast , self :: no_implicit_boolean :: NoImplicitBoolean , self :: no_multiple_spaces_in_regular_expression_literals :: NoMultipleSpacesInRegularExpressionLiterals , self :: no_shadow_restricted_names :: NoShadowRestrictedNames , self :: no_sparse_array :: NoSparseArray , self :: no_unnecessary_continue :: NoUnnecessaryContinue , self :: no_unsafe_negation :: NoUnsafeNegation , self :: no_unused_template_literal :: NoUnusedTemplateLiteral , self :: use_block_statements :: UseBlockStatements , self :: use_simplified_logic_expression :: UseSimplifiedLogicExpression , self :: use_single_case_statement :: UseSingleCaseStatement , self :: use_single_var_declarator :: UseSingleVarDeclarator , self :: use_template :: UseTemplate , self :: use_valid_typeof :: UseValidTypeof , self :: use_while :: UseWhile ,] } }
+
+pub(crate) mod no_constructor_return;
+pub(crate) mod no_empty_pattern;
+pub(crate) mod no_inner_declarations;
+pub(crate) mod no_invalid_constructor_super;
+pub(crate) mod no_precision_loss;
+pub(crate) mod no_setter_return;
+pub(crate) mod no_string_case_mismatch;
+pub(crate) mod no_switch_declarations;
+pub(crate) mod no_unnecessary_continue;
+pub(crate) mod no_unreachable;
+pub(crate) mod no_unreachable_super;
+pub(crate) mod no_unsafe_finally;
+pub(crate) mod no_unsafe_optional_chaining;
+pub(crate) mod no_unused_labels;
+pub(crate) mod no_void_type_return;
+pub(crate) mod use_valid_for_direction;
+pub(crate) mod use_yield;
+
+declare_group! {
+    pub (crate) Correctness {
+        name : "correctness" ,
+        rules : [
+            self :: no_constructor_return :: NoConstructorReturn ,
+            self :: no_empty_pattern :: NoEmptyPattern ,
+            self :: no_inner_declarations :: NoInnerDeclarations ,
+            self :: no_invalid_constructor_super :: NoInvalidConstructorSuper ,
+            self :: no_precision_loss :: NoPrecisionLoss ,
+            self :: no_setter_return :: NoSetterReturn ,
+            self :: no_string_case_mismatch :: NoStringCaseMismatch ,
+            self :: no_switch_declarations :: NoSwitchDeclarations ,
+            self :: no_unnecessary_continue :: NoUnnecessaryContinue ,
+            self :: no_unreachable :: NoUnreachable ,
+            self :: no_unreachable_super :: NoUnreachableSuper ,
+            self :: no_unsafe_finally :: NoUnsafeFinally ,
+            self :: no_unsafe_optional_chaining :: NoUnsafeOptionalChaining ,
+            self :: no_unused_labels :: NoUnusedLabels ,
+            self :: no_void_type_return :: NoVoidTypeReturn ,
+            self :: use_valid_for_direction :: UseValidForDirection ,
+            self :: use_yield :: UseYield ,
+        ]
+     }
+}

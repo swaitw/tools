@@ -1,12 +1,15 @@
-use anyhow::{bail, Result};
-use rome_service::workspace::{ChangeFileParams, CloseFileParams, Language, OpenFileParams};
+use anyhow::Result;
+use rome_service::workspace::{
+    ChangeFileParams, CloseFileParams, GetFileContentParams, Language, OpenFileParams,
+};
 use tower_lsp::lsp_types;
-use tracing::error;
+use tracing::{error, field};
 
+use crate::utils::apply_document_changes;
 use crate::{documents::Document, session::Session};
 
 /// Handler for `textDocument/didOpen` LSP notification
-#[tracing::instrument(level = "trace", skip(session), err)]
+#[tracing::instrument(level = "debug", skip(session), err)]
 pub(crate) async fn did_open(
     session: &Session,
     params: lsp_types::DidOpenTextDocumentParams,
@@ -16,7 +19,7 @@ pub(crate) async fn did_open(
     let content = params.text_document.text;
     let language_hint = Language::from_language_id(&params.text_document.language_id);
 
-    let rome_path = session.file_path(&url);
+    let rome_path = session.file_path(&url)?;
     let doc = Document::new(version, &content);
 
     session.workspace.open_file(OpenFileParams {
@@ -36,31 +39,37 @@ pub(crate) async fn did_open(
 }
 
 /// Handler for `textDocument/didChange` LSP notification
-#[tracing::instrument(level = "trace", skip(session), err)]
+#[tracing::instrument(level = "debug", skip_all, fields(url = field::display(&params.text_document.uri), version = params.text_document.version), err)]
 pub(crate) async fn did_change(
     session: &Session,
     params: lsp_types::DidChangeTextDocumentParams,
 ) -> Result<()> {
     let url = params.text_document.uri;
     let version = params.text_document.version;
-    let rome_path = session.file_path(&url);
 
-    // Because of TextDocumentSyncKind::Full, there should only be one change.
-    let mut content_changes = params.content_changes;
-    let content = match content_changes.pop() {
-        Some(change) => change.text,
-        None => bail!("Invalid textDocument/didChange for {:?}", url),
-    };
+    let rome_path = session.file_path(&url)?;
 
-    let doc = Document::new(version, &content);
+    let old_text = session.workspace.get_file_content(GetFileContentParams {
+        path: rome_path.clone(),
+    })?;
+    tracing::trace!("old document: {:?}", old_text);
+    tracing::trace!("content changes: {:?}", params.content_changes);
+
+    let text = apply_document_changes(
+        session.position_encoding(),
+        old_text,
+        params.content_changes,
+    );
+
+    tracing::trace!("new document: {:?}", text);
+
+    session.insert_document(url.clone(), Document::new(version, &text));
 
     session.workspace.change_file(ChangeFileParams {
         path: rome_path,
         version,
-        content,
+        content: text,
     })?;
-
-    session.insert_document(url.clone(), doc);
 
     if let Err(err) = session.update_diagnostics(url).await {
         error!("Failed to update diagnostics: {}", err);
@@ -70,13 +79,13 @@ pub(crate) async fn did_change(
 }
 
 /// Handler for `textDocument/didClose` LSP notification
-#[tracing::instrument(level = "trace", skip(session), err)]
+#[tracing::instrument(level = "debug", skip(session), err)]
 pub(crate) async fn did_close(
     session: &Session,
     params: lsp_types::DidCloseTextDocumentParams,
 ) -> Result<()> {
     let url = params.text_document.uri;
-    let rome_path = session.file_path(&url);
+    let rome_path = session.file_path(&url)?;
 
     session
         .workspace

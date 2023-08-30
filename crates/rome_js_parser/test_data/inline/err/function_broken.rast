@@ -18,7 +18,7 @@ JsModule {
             return_type_annotation: missing (optional),
             body: missing (required),
         },
-        JsUnknownStatement {
+        JsBogusStatement {
             items: [
                 R_PAREN@14..15 ")" [] [],
                 R_CURLY@15..16 "}" [] [],
@@ -70,7 +70,7 @@ JsModule {
         2: R_PAREN@13..14 ")" [] []
       6: (empty)
       7: (empty)
-    1: JS_UNKNOWN_STATEMENT@14..18
+    1: JS_BOGUS_STATEMENT@14..18
       0: R_PAREN@14..15 ")" [] []
       1: R_CURLY@15..16 "}" [] []
       2: R_PAREN@16..17 ")" [] []
@@ -97,7 +97,11 @@ function_broken.js:1:15 parse ━━━━━━━━━━━━━━━━�
 
   × expected a function body but instead found ')'
   
-  × Expected a function body here
+  > 1 │ function foo())})}{{{  {}
+      │               ^
+    2 │ 
+  
+  i Expected a function body here
   
   > 1 │ function foo())})}{{{  {}
       │               ^
@@ -108,7 +112,11 @@ function_broken.js:2:1 parse ━━━━━━━━━━━━━━━━━
 
   × expected `}` but instead the file ends
   
-  × the file ends here
+    1 │ function foo())})}{{{  {}
+  > 2 │ 
+      │ 
+  
+  i the file ends here
   
     1 │ function foo())})}{{{  {}
   > 2 │ 

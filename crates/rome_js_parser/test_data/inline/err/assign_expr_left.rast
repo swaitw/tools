@@ -18,7 +18,7 @@ JsModule {
             },
             semicolon_token: missing (optional),
         },
-        JsUnknownStatement {
+        JsBogusStatement {
             items: [
                 R_PAREN@7..8 ")" [] [],
             ],
@@ -45,7 +45,7 @@ JsModule {
           0: JS_REFERENCE_IDENTIFIER@4..7
             0: IDENT@4..7 "foo" [] []
       1: (empty)
-    1: JS_UNKNOWN_STATEMENT@7..8
+    1: JS_BOGUS_STATEMENT@7..8
       0: R_PAREN@7..8 ")" [] []
     2: JS_EMPTY_STATEMENT@8..9
       0: SEMICOLON@8..9 ";" [] []
@@ -55,18 +55,22 @@ assign_expr_left.js:1:3 parse ━━━━━━━━━━━━━━━━�
 
   × expected `)` but instead found `=`
   
-  × unexpected
-  
   > 1 │ ( = foo);
       │   ^
     2 │ 
+  
+  i Remove =
   
 --
 assign_expr_left.js:1:8 parse ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
   × Expected a semicolon or an implicit semicolon after a statement, but found none
   
-  × An explicit or implicit semicolon is expected here...
+  > 1 │ ( = foo);
+      │        ^
+    2 │ 
+  
+  i An explicit or implicit semicolon is expected here...
   
   > 1 │ ( = foo);
       │        ^

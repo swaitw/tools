@@ -1,8 +1,11 @@
 ---
-source: crates/rome_js_formatter/tests/spec_test.rs
-expression: call_expression.ts
+source: crates/rome_formatter_test/src/snapshot_builder.rs
+info: ts/call_expression.ts
 ---
+
 # Input
+
+```ts
 app.get("/", (req, res): void => {
     res.send("Hello World!");
 })
@@ -27,15 +30,27 @@ export class Task {
         this.args = args;
     }
 }
+```
+
+
 =============================
+
 # Outputs
+
 ## Output 1
+
 -----
 Indent style: Tab
 Line width: 80
 Quote style: Double Quotes
+JSX quote style: Double Quotes
 Quote properties: As needed
+Trailing comma: All
+Semicolons: Always
+Arrow parentheses: Always
 -----
+
+```ts
 app.get("/", (req, res): void => {
 	res.send("Hello World!");
 });
@@ -59,4 +74,6 @@ export class Task {
 		this.args = args;
 	}
 }
+```
+
 

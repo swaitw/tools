@@ -1,8 +1,11 @@
 ---
-source: crates/rome_js_formatter/tests/spec_test.rs
-expression: suppression.js
+source: crates/rome_formatter_test/src/snapshot_builder.rs
+info: js/module/suppression.js
 ---
+
 # Input
+
+```js
 // rome-ignore format: the following if should print inline
 if(true) statement();
 
@@ -32,15 +35,27 @@ const    expr2    =    {
 let a =
     // rome-ignore format: test
 function () {}
+```
+
+
 =============================
+
 # Outputs
+
 ## Output 1
+
 -----
 Indent style: Tab
 Line width: 80
 Quote style: Double Quotes
+JSX quote style: Double Quotes
 Quote properties: As needed
+Trailing comma: All
+Semicolons: Always
+Arrow parentheses: Always
 -----
+
+```js
 // rome-ignore format: the following if should print inline
 if(true) statement();
 
@@ -70,4 +85,6 @@ const expr2 = {
 let a =
 	// rome-ignore format: test
 	function () {};
+```
+
 

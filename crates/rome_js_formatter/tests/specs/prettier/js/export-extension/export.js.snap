@@ -1,7 +1,7 @@
 ---
-source: crates/rome_js_formatter/tests/prettier_tests.rs
-info:
-  test_file: "js\\export-extension\\export.js"
+source: crates/rome_formatter_test/src/snapshot_builder.rs
+assertion_line: 212
+info: js/export-extension/export.js
 ---
 
 # Input
@@ -15,6 +15,7 @@ export * as d, { bar } from 'mod';
 export { fooooooooooooooooooooooooooooooooooooooooooooooooo } from "fooooooooooooooooooooooooooooo";
 export Bar, { barrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr } from "barrrrrrrrrrrrrrrrrrrrrrrrrrrr";
 export { foooooooooooooooooooooooooooooooooooooooooooooo, fooooooooooooooooooooooooooooooooooooooooooooooo  } from "fooooooooooooooooooooooooooooo";
+
 ```
 
 
@@ -23,16 +24,12 @@ export { foooooooooooooooooooooooooooooooooooooooooooooo, fooooooooooooooooooooo
 ```diff
 --- Prettier
 +++ Rome
-@@ -1,12 +1,31 @@
+@@ -1,12 +1,29 @@
  export * as ns from "mod";
 -export v from "mod";
 -export a, * as b from "mod";
 -export c, { foo } from "mod";
 -export * as d, { bar } from "mod";
--export { fooooooooooooooooooooooooooooooooooooooooooooooooo } from "fooooooooooooooooooooooooooooo";
--export Bar, {
--  barrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr,
--} from "barrrrrrrrrrrrrrrrrrrrrrrrrrrr";
 +export
 +v;
 +from;
@@ -53,9 +50,10 @@ export { foooooooooooooooooooooooooooooooooooooooooooooo, fooooooooooooooooooooo
 +}
 +from;
 +("mod");
-+export {
-+  fooooooooooooooooooooooooooooooooooooooooooooooooo,
-+} from "fooooooooooooooooooooooooooooo";
+ export { fooooooooooooooooooooooooooooooooooooooooooooooooo } from "fooooooooooooooooooooooooooooo";
+-export Bar, {
+-  barrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr,
+-} from "barrrrrrrrrrrrrrrrrrrrrrrrrrrr";
 +export
 +Bar, { barrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr };
 +from;
@@ -89,9 +87,7 @@ export * as d
 }
 from;
 ("mod");
-export {
-  fooooooooooooooooooooooooooooooooooooooooooooooooo,
-} from "fooooooooooooooooooooooooooooo";
+export { fooooooooooooooooooooooooooooooooooooooooooooooooo } from "fooooooooooooooooooooooooooooo";
 export
 Bar, { barrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr };
 from;
@@ -102,14 +98,11 @@ export {
 } from "fooooooooooooooooooooooooooooo";
 ```
 
-
 # Errors
 ```
 export.js:2:8 parse ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
   × expected `*` but instead found `v`
-  
-  × unexpected
   
     1 │ export * as ns from 'mod';
   > 2 │ export v from 'mod';
@@ -117,11 +110,19 @@ export.js:2:8 parse ━━━━━━━━━━━━━━━━━━━━
     3 │ export a, * as b from 'mod';
     4 │ export c, { foo } from 'mod';
   
+  i Remove v
+  
 export.js:2:10 parse ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
   × Expected a semicolon or an implicit semicolon after a statement, but found none
   
-  × An explicit or implicit semicolon is expected here...
+    1 │ export * as ns from 'mod';
+  > 2 │ export v from 'mod';
+      │          ^^^^
+    3 │ export a, * as b from 'mod';
+    4 │ export c, { foo } from 'mod';
+  
+  i An explicit or implicit semicolon is expected here...
   
     1 │ export * as ns from 'mod';
   > 2 │ export v from 'mod';
@@ -141,7 +142,13 @@ export.js:2:15 parse ━━━━━━━━━━━━━━━━━━━�
 
   × Expected a semicolon or an implicit semicolon after a statement, but found none
   
-  × An explicit or implicit semicolon is expected here...
+    1 │ export * as ns from 'mod';
+  > 2 │ export v from 'mod';
+      │               ^^^^^
+    3 │ export a, * as b from 'mod';
+    4 │ export c, { foo } from 'mod';
+  
+  i An explicit or implicit semicolon is expected here...
   
     1 │ export * as ns from 'mod';
   > 2 │ export v from 'mod';
@@ -161,7 +168,14 @@ export.js:3:8 parse ━━━━━━━━━━━━━━━━━━━━
 
   × expected a class, a function, or a variable declaration but instead found 'a'
   
-  × Expected a class, a function, or a variable declaration here
+    1 │ export * as ns from 'mod';
+    2 │ export v from 'mod';
+  > 3 │ export a, * as b from 'mod';
+      │        ^
+    4 │ export c, { foo } from 'mod';
+    5 │ export * as d, { bar } from 'mod';
+  
+  i Expected a class, a function, or a variable declaration here
   
     1 │ export * as ns from 'mod';
     2 │ export v from 'mod';
@@ -174,8 +188,6 @@ export.js:3:11 parse ━━━━━━━━━━━━━━━━━━━�
 
   × Expected an expression for the left hand side of the `*` operator.
   
-  × This operator requires a left hand side value
-  
     1 │ export * as ns from 'mod';
     2 │ export v from 'mod';
   > 3 │ export a, * as b from 'mod';
@@ -183,11 +195,20 @@ export.js:3:11 parse ━━━━━━━━━━━━━━━━━━━�
     4 │ export c, { foo } from 'mod';
     5 │ export * as d, { bar } from 'mod';
   
+  i This operator requires a left hand side value
+  
 export.js:3:16 parse ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
   × Expected a semicolon or an implicit semicolon after a statement, but found none
   
-  × An explicit or implicit semicolon is expected here...
+    1 │ export * as ns from 'mod';
+    2 │ export v from 'mod';
+  > 3 │ export a, * as b from 'mod';
+      │                ^
+    4 │ export c, { foo } from 'mod';
+    5 │ export * as d, { bar } from 'mod';
+  
+  i An explicit or implicit semicolon is expected here...
   
     1 │ export * as ns from 'mod';
     2 │ export v from 'mod';
@@ -209,7 +230,14 @@ export.js:3:18 parse ━━━━━━━━━━━━━━━━━━━�
 
   × Expected a semicolon or an implicit semicolon after a statement, but found none
   
-  × An explicit or implicit semicolon is expected here...
+    1 │ export * as ns from 'mod';
+    2 │ export v from 'mod';
+  > 3 │ export a, * as b from 'mod';
+      │                  ^^^^
+    4 │ export c, { foo } from 'mod';
+    5 │ export * as d, { bar } from 'mod';
+  
+  i An explicit or implicit semicolon is expected here...
   
     1 │ export * as ns from 'mod';
     2 │ export v from 'mod';
@@ -231,7 +259,14 @@ export.js:3:23 parse ━━━━━━━━━━━━━━━━━━━�
 
   × Expected a semicolon or an implicit semicolon after a statement, but found none
   
-  × An explicit or implicit semicolon is expected here...
+    1 │ export * as ns from 'mod';
+    2 │ export v from 'mod';
+  > 3 │ export a, * as b from 'mod';
+      │                       ^^^^^
+    4 │ export c, { foo } from 'mod';
+    5 │ export * as d, { bar } from 'mod';
+  
+  i An explicit or implicit semicolon is expected here...
   
     1 │ export * as ns from 'mod';
     2 │ export v from 'mod';
@@ -253,7 +288,14 @@ export.js:4:8 parse ━━━━━━━━━━━━━━━━━━━━
 
   × expected a class, a function, or a variable declaration but instead found 'c'
   
-  × Expected a class, a function, or a variable declaration here
+    2 │ export v from 'mod';
+    3 │ export a, * as b from 'mod';
+  > 4 │ export c, { foo } from 'mod';
+      │        ^
+    5 │ export * as d, { bar } from 'mod';
+    6 │ export { fooooooooooooooooooooooooooooooooooooooooooooooooo } from "fooooooooooooooooooooooooooooo";
+  
+  i Expected a class, a function, or a variable declaration here
   
     2 │ export v from 'mod';
     3 │ export a, * as b from 'mod';
@@ -266,7 +308,14 @@ export.js:4:19 parse ━━━━━━━━━━━━━━━━━━━�
 
   × Expected a semicolon or an implicit semicolon after a statement, but found none
   
-  × An explicit or implicit semicolon is expected here...
+    2 │ export v from 'mod';
+    3 │ export a, * as b from 'mod';
+  > 4 │ export c, { foo } from 'mod';
+      │                   ^^^^
+    5 │ export * as d, { bar } from 'mod';
+    6 │ export { fooooooooooooooooooooooooooooooooooooooooooooooooo } from "fooooooooooooooooooooooooooooo";
+  
+  i An explicit or implicit semicolon is expected here...
   
     2 │ export v from 'mod';
     3 │ export a, * as b from 'mod';
@@ -288,7 +337,14 @@ export.js:4:24 parse ━━━━━━━━━━━━━━━━━━━�
 
   × Expected a semicolon or an implicit semicolon after a statement, but found none
   
-  × An explicit or implicit semicolon is expected here...
+    2 │ export v from 'mod';
+    3 │ export a, * as b from 'mod';
+  > 4 │ export c, { foo } from 'mod';
+      │                        ^^^^^
+    5 │ export * as d, { bar } from 'mod';
+    6 │ export { fooooooooooooooooooooooooooooooooooooooooooooooooo } from "fooooooooooooooooooooooooooooo";
+  
+  i An explicit or implicit semicolon is expected here...
   
     2 │ export v from 'mod';
     3 │ export a, * as b from 'mod';
@@ -310,8 +366,6 @@ export.js:5:14 parse ━━━━━━━━━━━━━━━━━━━�
 
   × expected `from` but instead found `,`
   
-  × unexpected
-  
     3 │ export a, * as b from 'mod';
     4 │ export c, { foo } from 'mod';
   > 5 │ export * as d, { bar } from 'mod';
@@ -319,11 +373,20 @@ export.js:5:14 parse ━━━━━━━━━━━━━━━━━━━�
     6 │ export { fooooooooooooooooooooooooooooooooooooooooooooooooo } from "fooooooooooooooooooooooooooooo";
     7 │ export Bar, { barrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr } from "barrrrrrrrrrrrrrrrrrrrrrrrrrrr";
   
+  i Remove ,
+  
 export.js:5:29 parse ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
   × Expected a semicolon or an implicit semicolon after a statement, but found none
   
-  × An explicit or implicit semicolon is expected here...
+    3 │ export a, * as b from 'mod';
+    4 │ export c, { foo } from 'mod';
+  > 5 │ export * as d, { bar } from 'mod';
+      │                             ^^^^^
+    6 │ export { fooooooooooooooooooooooooooooooooooooooooooooooooo } from "fooooooooooooooooooooooooooooo";
+    7 │ export Bar, { barrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr } from "barrrrrrrrrrrrrrrrrrrrrrrrrrrr";
+  
+  i An explicit or implicit semicolon is expected here...
   
     3 │ export a, * as b from 'mod';
     4 │ export c, { foo } from 'mod';
@@ -345,7 +408,14 @@ export.js:7:8 parse ━━━━━━━━━━━━━━━━━━━━
 
   × expected a class, a function, or a variable declaration but instead found 'Bar'
   
-  × Expected a class, a function, or a variable declaration here
+    5 │ export * as d, { bar } from 'mod';
+    6 │ export { fooooooooooooooooooooooooooooooooooooooooooooooooo } from "fooooooooooooooooooooooooooooo";
+  > 7 │ export Bar, { barrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr } from "barrrrrrrrrrrrrrrrrrrrrrrrrrrr";
+      │        ^^^
+    8 │ export { foooooooooooooooooooooooooooooooooooooooooooooo, fooooooooooooooooooooooooooooooooooooooooooooooo  } from "fooooooooooooooooooooooooooooo";
+    9 │ 
+  
+  i Expected a class, a function, or a variable declaration here
   
     5 │ export * as d, { bar } from 'mod';
     6 │ export { fooooooooooooooooooooooooooooooooooooooooooooooooo } from "fooooooooooooooooooooooooooooo";
@@ -358,7 +428,14 @@ export.js:7:63 parse ━━━━━━━━━━━━━━━━━━━�
 
   × Expected a semicolon or an implicit semicolon after a statement, but found none
   
-  × An explicit or implicit semicolon is expected here...
+    5 │ export * as d, { bar } from 'mod';
+    6 │ export { fooooooooooooooooooooooooooooooooooooooooooooooooo } from "fooooooooooooooooooooooooooooo";
+  > 7 │ export Bar, { barrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr } from "barrrrrrrrrrrrrrrrrrrrrrrrrrrr";
+      │                                                               ^^^^
+    8 │ export { foooooooooooooooooooooooooooooooooooooooooooooo, fooooooooooooooooooooooooooooooooooooooooooooooo  } from "fooooooooooooooooooooooooooooo";
+    9 │ 
+  
+  i An explicit or implicit semicolon is expected here...
   
     5 │ export * as d, { bar } from 'mod';
     6 │ export { fooooooooooooooooooooooooooooooooooooooooooooooooo } from "fooooooooooooooooooooooooooooo";
@@ -380,7 +457,14 @@ export.js:7:68 parse ━━━━━━━━━━━━━━━━━━━�
 
   × Expected a semicolon or an implicit semicolon after a statement, but found none
   
-  × An explicit or implicit semicolon is expected here...
+    5 │ export * as d, { bar } from 'mod';
+    6 │ export { fooooooooooooooooooooooooooooooooooooooooooooooooo } from "fooooooooooooooooooooooooooooo";
+  > 7 │ export Bar, { barrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr } from "barrrrrrrrrrrrrrrrrrrrrrrrrrrr";
+      │                                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    8 │ export { foooooooooooooooooooooooooooooooooooooooooooooo, fooooooooooooooooooooooooooooooooooooooooooooooo  } from "fooooooooooooooooooooooooooooo";
+    9 │ 
+  
+  i An explicit or implicit semicolon is expected here...
   
     5 │ export * as d, { bar } from 'mod';
     6 │ export { fooooooooooooooooooooooooooooooooooooooooooooooooo } from "fooooooooooooooooooooooooooooo";
@@ -399,6 +483,11 @@ export.js:7:68 parse ━━━━━━━━━━━━━━━━━━━�
     9 │ 
   
 
+```
+
+# Lines exceeding max width of 80 characters
+```
+   22: export { fooooooooooooooooooooooooooooooooooooooooooooooooo } from "fooooooooooooooooooooooooooooo";
 ```
 
 

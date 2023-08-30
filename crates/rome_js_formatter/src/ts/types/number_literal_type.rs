@@ -1,4 +1,5 @@
 use crate::prelude::*;
+use rome_formatter::token::number::format_number_token;
 
 use crate::parentheses::NeedsParentheses;
 use rome_formatter::write;
@@ -13,7 +14,10 @@ impl FormatNodeRule<TsNumberLiteralType> for FormatTsNumberLiteralType {
             minus_token,
             literal_token,
         } = node.as_fields();
-        write![f, [minus_token.format(), literal_token.format()]]
+        write![
+            f,
+            [minus_token.format(), format_number_token(&literal_token?)]
+        ]
     }
 
     fn needs_parentheses(&self, item: &TsNumberLiteralType) -> bool {

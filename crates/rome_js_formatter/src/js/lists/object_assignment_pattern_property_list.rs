@@ -1,8 +1,9 @@
+use crate::context::trailing_comma::FormatTrailingComma;
 use crate::prelude::*;
-use rome_js_syntax::{JsAnyObjectAssignmentPatternMember, JsObjectAssignmentPatternPropertyList};
+use rome_js_syntax::{AnyJsObjectAssignmentPatternMember, JsObjectAssignmentPatternPropertyList};
 
 #[derive(Debug, Clone, Default)]
-pub struct FormatJsObjectAssignmentPatternPropertyList;
+pub(crate) struct FormatJsObjectAssignmentPatternPropertyList;
 
 impl FormatRule<JsObjectAssignmentPatternPropertyList>
     for FormatJsObjectAssignmentPatternPropertyList
@@ -18,7 +19,7 @@ impl FormatRule<JsObjectAssignmentPatternPropertyList>
         let has_trailing_rest = match node.into_iter().last() {
             Some(elem) => matches!(
                 elem?,
-                JsAnyObjectAssignmentPatternMember::JsObjectAssignmentPatternRest(_)
+                AnyJsObjectAssignmentPatternMember::JsObjectAssignmentPatternRest(_)
             ),
             None => false,
         };
@@ -26,7 +27,7 @@ impl FormatRule<JsObjectAssignmentPatternPropertyList>
         let trailing_separator = if has_trailing_rest {
             TrailingSeparator::Disallowed
         } else {
-            TrailingSeparator::Allowed
+            FormatTrailingComma::ES5.trailing_separator(f.options())
         };
 
         let entries = node

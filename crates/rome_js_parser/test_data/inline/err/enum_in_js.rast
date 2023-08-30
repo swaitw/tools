@@ -2,7 +2,7 @@ JsModule {
     interpreter_token: missing (optional),
     directives: JsDirectiveList [],
     items: JsModuleItemList [
-        JsUnknownStatement {
+        JsBogusStatement {
             items: [
                 ENUM_KW@0..5 "enum" [] [Whitespace(" ")],
                 JsIdentifierBinding {
@@ -21,7 +21,7 @@ JsModule {
   0: (empty)
   1: JS_DIRECTIVE_LIST@0..0
   2: JS_MODULE_ITEM_LIST@0..9
-    0: JS_UNKNOWN_STATEMENT@0..9
+    0: JS_BOGUS_STATEMENT@0..9
       0: ENUM_KW@0..5 "enum" [] [Whitespace(" ")]
       1: JS_IDENTIFIER_BINDING@5..7
         0: IDENT@5..7 "A" [] [Whitespace(" ")]
@@ -34,11 +34,11 @@ enum_in_js.js:1:1 parse ━━━━━━━━━━━━━━━━━━�
 
   × 'enum's are a TypeScript only feature. Convert your file to a TypeScript file or remove the syntax.
   
-  × TypeScript only syntax
-  
   > 1 │ enum A {}
       │ ^^^^^^^^^
     2 │ 
+  
+  i TypeScript only syntax
   
 --
 enum A {}

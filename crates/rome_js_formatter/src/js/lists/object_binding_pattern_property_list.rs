@@ -1,8 +1,9 @@
+use crate::context::trailing_comma::FormatTrailingComma;
 use crate::prelude::*;
-use rome_js_syntax::{JsAnyObjectBindingPatternMember, JsObjectBindingPatternPropertyList};
+use rome_js_syntax::{AnyJsObjectBindingPatternMember, JsObjectBindingPatternPropertyList};
 
 #[derive(Debug, Clone, Default)]
-pub struct FormatJsObjectBindingPatternPropertyList;
+pub(crate) struct FormatJsObjectBindingPatternPropertyList;
 
 impl FormatRule<JsObjectBindingPatternPropertyList> for FormatJsObjectBindingPatternPropertyList {
     type Context = JsFormatContext;
@@ -16,7 +17,7 @@ impl FormatRule<JsObjectBindingPatternPropertyList> for FormatJsObjectBindingPat
         let has_trailing_rest = match node.into_iter().last() {
             Some(elem) => matches!(
                 elem?,
-                JsAnyObjectBindingPatternMember::JsObjectBindingPatternRest(_)
+                AnyJsObjectBindingPatternMember::JsObjectBindingPatternRest(_)
             ),
             None => false,
         };
@@ -24,7 +25,7 @@ impl FormatRule<JsObjectBindingPatternPropertyList> for FormatJsObjectBindingPat
         let trailing_separator = if has_trailing_rest {
             TrailingSeparator::Disallowed
         } else {
-            TrailingSeparator::Allowed
+            FormatTrailingComma::ES5.trailing_separator(f.options())
         };
 
         let entries = node

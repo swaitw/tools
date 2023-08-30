@@ -1,7 +1,7 @@
 ---
-source: crates/rome_js_formatter/tests/prettier_tests.rs
-info:
-  test_file: "js\\babel-plugins\\v8intrinsic.js"
+source: crates/rome_formatter_test/src/snapshot_builder.rs
+assertion_line: 212
+info: js/babel-plugins/v8intrinsic.js
 ---
 
 # Input
@@ -32,6 +32,7 @@ function *foo() {
 }
 
 foo%bar()
+
 ```
 
 
@@ -90,14 +91,19 @@ function* foo() {
 foo % bar();
 ```
 
-
 # Errors
 ```
 v8intrinsic.js:3:1 parse ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
   × expected a statement but instead found '%DebugPrint(foo)'
   
-  × Expected a statement here
+    1 │ // https://github.com/babel/babel/pull/10148
+    2 │ 
+  > 3 │ %DebugPrint(foo);
+      │ ^^^^^^^^^^^^^^^^
+    4 │ 
+  
+  i Expected a statement here
   
     1 │ // https://github.com/babel/babel/pull/10148
     2 │ 
@@ -109,7 +115,14 @@ v8intrinsic.js:19:5 parse ━━━━━━━━━━━━━━━━━━
 
   × expected an expression but instead found '%'
   
-  × Expected an expression here
+    17 │ // %DebugPrint?.(null)
+    18 │ 
+  > 19 │ new %DebugPrint(null);
+       │     ^
+    20 │ 
+    21 │ function *foo() {
+  
+  i Expected an expression here
   
     17 │ // %DebugPrint?.(null)
     18 │ 
@@ -122,7 +135,13 @@ v8intrinsic.js:22:9 parse ━━━━━━━━━━━━━━━━━━
 
   × Expected a semicolon or an implicit semicolon after a statement, but found none
   
-  × An explicit or implicit semicolon is expected here...
+    21 │ function *foo() {
+  > 22 │   yield %StringParseInt("42", 10)
+       │         ^
+    23 │ }
+    24 │ 
+  
+  i An explicit or implicit semicolon is expected here...
   
     21 │ function *foo() {
   > 22 │   yield %StringParseInt("42", 10)
@@ -148,4 +167,5 @@ v8intrinsic.js:22:9 parse ━━━━━━━━━━━━━━━━━━
    11: // Invalid code https://github.com/JLHwung/babel/blob/c1a3cbfd65e08b7013fd6f8c62add8cb10b4b169/packages/babel-parser/test/fixtures/v8intrinsic/_errors/not-in-call-expression/options.json
    15: // https://github.com/JLHwung/babel/blob/c1a3cbfd65e08b7013fd6f8c62add8cb10b4b169/packages/babel-parser/test/fixtures/v8intrinsic/_errors/not-in-call-expression/options.json
 ```
+
 

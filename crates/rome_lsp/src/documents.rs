@@ -1,4 +1,4 @@
-use crate::line_index::LineIndex;
+use crate::converters::line_index::LineIndex;
 
 /// Represents an open [`textDocument`]. Can be cheaply cloned.
 ///

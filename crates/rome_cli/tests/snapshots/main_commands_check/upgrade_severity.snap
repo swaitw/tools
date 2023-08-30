@@ -8,11 +8,10 @@ expression: content
 {
   "linter": {
     "rules": {
-        "recommended": true,
-        "nursery": {
-            "noUnreachable": "error",
-            "noUnusedVariables": "error"
-        }
+      "recommended": true,
+      "style": {
+        "noNegationElse": "error"
+      }
     }
   }
 }
@@ -21,54 +20,72 @@ expression: content
 ## `file.js`
 
 ```js
-function f() {
-    for (;;) {
-        continue;
-        break;
-    }
-}
-
+if(!cond) { exprA(); } else { exprB() }
 ```
 
 # Termination Message
 
 ```block
-errors where emitted while running checks
+check ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Some errors were emitted while running checks.
+  
+
+
 ```
 
 # Emitted Messages
 
 ```block
-file.js:2:5 lint/nursery/noUnreachable ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+file.js:1:1 lint/style/noNegationElse  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-  × This code is unreachable
+  × Invert blocks when performing a negation test.
   
-    1 │ function f() {
-  > 2 │     for (;;) {
-      │     ^^^^^^^^^^
-  > 3 │         continue;
-  > 4 │         break;
-  > 5 │     }
-      │     ^
-    6 │ }
-    7 │ 
+  > 1 │ if(!cond) { exprA(); } else { exprB() }
+      │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  
+  i Suggested fix: Exchange alternate and consequent of the node
+  
+  - if(!cond)·{·exprA();·}·else·{·exprB()·}
+  + if(cond)·{·exprB()·}·else·{·exprA();·}
   
 
 ```
 
 ```block
-file.js:1:10 lint/nursery/noUnusedVariables ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+file.js lint ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-  × This function is unused.
-  
-  > 1 │ function f() {
-      │          ^
-    2 │     for (;;) {
-    3 │         continue;
-  
-  i Unused variables usually are result of incomplete refactoring, typos and other source of bugs.
+  × Fixes applied to the file, but there are still diagnostics to address.
   
 
+```
+
+```block
+file.js format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i Formatter would have printed the following content:
+  
+    1   │ - if(!cond)·{·exprA();·}·else·{·exprB()·}
+      1 │ + if·(!cond)·{
+      2 │ + → exprA();
+      3 │ + }·else·{
+      4 │ + → exprB();
+      5 │ + }
+      6 │ + 
+  
+
+```
+
+```block
+check ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Some errors were emitted while running checks.
+  
+
+```
+
+```block
+Checked 1 file(s) in <TIME>
 ```
 
 

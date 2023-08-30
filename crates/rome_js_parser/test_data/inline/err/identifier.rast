@@ -3,9 +3,9 @@ JsModule {
     directives: JsDirectiveList [],
     items: JsModuleItemList [
         JsExpressionStatement {
-            expression: JsUnknownExpression {
+            expression: JsBogusExpression {
                 items: [
-                    JsUnknown {
+                    JsBogus {
                         items: [
                             IDENT@0..5 "yield" [] [],
                         ],
@@ -30,8 +30,8 @@ JsModule {
   1: JS_DIRECTIVE_LIST@0..0
   2: JS_MODULE_ITEM_LIST@0..13
     0: JS_EXPRESSION_STATEMENT@0..6
-      0: JS_UNKNOWN_EXPRESSION@0..5
-        0: JS_UNKNOWN@0..5
+      0: JS_BOGUS_EXPRESSION@0..5
+        0: JS_BOGUS@0..5
           0: IDENT@0..5 "yield" [] []
       1: SEMICOLON@5..6 ";" [] []
     1: JS_EXPRESSION_STATEMENT@6..13
@@ -55,7 +55,12 @@ identifier.js:2:6 parse ━━━━━━━━━━━━━━━━━━�
 
   × expected an unary expression but instead found ';'
   
-  × Expected an unary expression here
+    1 │ yield;
+  > 2 │ await;
+      │      ^
+    3 │ 
+  
+  i Expected an unary expression here
   
     1 │ yield;
   > 2 │ await;
